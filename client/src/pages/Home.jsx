@@ -1,41 +1,34 @@
 import axios from "axios";
+import { useState, useEffect } from "react";
+
 const Home=()=>{
-   
-    const handleSubmit1=async()=>{
+
+    
+    const userAuthenicate =async()=>{
+ let api="http://localhost:8000/students/userauth";
+ const token = localStorage.getItem("token");
          
-              let api = `${import.meta.env.VITE_BACKEND_URL}/home`;
-            const response = await axios.get(api);
-           console.log(response);
+     if (token){
+        const response = await axios.post(api, {}, {headers:{"auth-token":token}});
+       console.log(response.data);
+     }
+     else {
+         console.log("No token !!! you have in your Browser!")
+     }
+
     }
 
 
+    useEffect(()=>{
+        userAuthenicate();
+    }, [])
 
-     const handleSubmit2=async()=>{
-        try {
-              let api = `${import.meta.env.VITE_BACKEND_URL}/about`;
-            const response = await axios.get(api);
-            console.log(response);
-        } catch (error) {
-             console.log(error);
-        }
-           
-    }
 
-     const handleSubmit3=async()=>{
-        try {
-            
-             let api = `${import.meta.env.VITE_BACKEND_URL}/service`;
-            const response = await axios.get(api);
-            console.log(response.data);
-        } catch (error) {
-             alert(error.response.data);
-        }
-           
-    }
     return(
         <>
          <h1> Welcom To Home Page</h1>
         </>
     )
 }
+
 export default Home;
