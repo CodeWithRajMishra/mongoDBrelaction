@@ -1,28 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 const Display = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+    const [mydata, setMydata]= useState([]);
 
-  const handleSubmit=async()=>{
+  
+  const loadData=async()=>{
 
-    let api="http://localhost:8000/students/login";
-      const response = await axios.post(api, {email, password}); 
+    let api="http://localhost:8000/students/display";
+      const response = await axios.get(api); 
       console.log(response.data);
-      localStorage.setItem("token", response.data.token);
-      navigate("/home");
+      setMydata(response.data);
     }
 
-  return (
+    useEffect(()=>{
+      loadData();
+    }, []);
+
+
+const ans= mydata.map((key)=>{
+    return(
+      <>
+        <tr>
+          <td>
+          
+             <img src={key.defaultImage} style={{width:"100px", height:"80px"}}/>
+             <br />
+             {
+              key.images.map((key1)=>{
+                return "<p> <img src="+key1+" width='30' height='40' /> <p>"
+              })
+             }
+          </td>
+           <td>{key.name}</td>
+            <td>{key.email}</td>
+             <td>{key.subject}</td>
+        </tr>
+      
+      </>
+    )
+});
+
+    return (
     <>
-      <h1> User Login</h1>
-      Enter Email <input type="text" value={email} onChange={(e)=>{setEmail(e.target.value)}} />
-      <br />
-      Enter Password <input type="password" value={password} onChange={(e)=>{setPassword(e.target.value)}} />
-      <br />
-      <button onClick={handleSubmit}>Registration</button>
+      <h1> Data display</h1>
+      <table>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th> Email</th>
+          <th> Subject</th>
+        </tr>
+        {ans}
+      </table>
+    
 
     </>
   )
